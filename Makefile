@@ -1,4 +1,4 @@
-APPLICATION_NAME ?= docker-gs-ping
+APPLICATION_NAME ?= simple_saver_service
 CONTAINER_NAME ?= rest-server
 PORT ?= 8080
 

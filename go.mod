@@ -1,4 +1,4 @@
-module github.com/olliefr/docker-gs-ping
+module github.com/helloevanhere/simple_saver_service
 
 go 1.20
 

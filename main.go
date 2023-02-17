@@ -5,7 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/olliefr/docker-gs-ping/pkg/api/v1"
+	"github.com/helloevanhere/simple_saver_service/pkg/api/v1"
 )
 
 func main() {
