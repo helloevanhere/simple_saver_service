@@ -4,7 +4,11 @@ PORT ?= 8080
 
 run:
 	docker build --tag ${APPLICATION_NAME} .
-	docker run -d -p ${PORT}:${PORT} --name ${CONTAINER_NAME} ${APPLICATION_NAME}
+	docker run -d -p ${PORT}:${PORT} \
+		-e AWS_ACCESS_KEY_ID=$$AWS_ACCESS_KEY_ID \
+        -e AWS_SECRET_ACCESS_KEY=$$AWS_SECRET_ACCESS_KEY \
+		-e AWS_REGION=$$AWS_REGION \
+        --name ${CONTAINER_NAME} ${APPLICATION_NAME}
 
 clean:
 	docker stop ${CONTAINER_NAME}
