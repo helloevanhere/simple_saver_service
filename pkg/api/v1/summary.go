@@ -4,6 +4,7 @@ import (
 	// "net/http"
 	"os"
 	// "github.com/labstack/echo/v4"
+	"sort"
 	"fmt"
 	"time"
     "github.com/aws/aws-sdk-go/aws"
@@ -167,6 +168,13 @@ func createS3Summary(sess *session.Session, buckets []string) (s3Summary, error)
 	summary.TotalObjectCount = totalObjectCount
 	summary.AvgObjectCount = int64(totalObjectCount/summary.TotalCount)
 	summary.AvgSize = int64(totalSize/summary.TotalCount)
+
+	//sort Bucket summaries smallest bucket by data size to largest
+	if len(summary.BucketSummaries) > 0 {
+		sort.Slice(summary.BucketSummaries[:], func(i, j int) bool {
+			return summary.BucketSummaries[i].Size < summary.BucketSummaries[j].Size
+		})
+	}
 
 	return summary, nil
 }
