@@ -103,7 +103,7 @@ func listS3Buckets(sess *session.Session) ([]string, error) {
 	return bucketNames, nil
 }
 
-func getBucketObjects(sess *session.Session, bucketName string) (*s3.ListObjectsV2Output, error) {
+func listBucketObjects(sess *session.Session, bucketName string) (*s3.ListObjectsV2Output, error) {
 	svc := s3.New(sess)
 
 	input := &s3.ListObjectsV2Input{
@@ -125,7 +125,7 @@ func createS3Summary(sess *session.Session, buckets []string) ([]bucketSummary, 
 	// Loop through the buckets and get metadata
 	for _, bucketName := range buckets {
 		// Get bucket objects
-		objResp, err := getBucketObjects(sess, bucketName)
+		objResp, err := listBucketObjects(sess, bucketName)
 		if err != nil {
 			return bucketSummaries, fmt.Errorf("error getting objects for bucket %s: %v", bucketName, err)
 		}
