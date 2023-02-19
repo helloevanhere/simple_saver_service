@@ -16,32 +16,56 @@ func testHandler(c echo.Context) error {
 	return c.HTML(http.StatusOK, "Hello, Docker! <3")
 }
 
-func getS3SummarysHandler(c echo.Context) error {
+type bucketsRequest struct {
+    Buckets []string `json:"buckets"`
+}  
+
+type bucketSummary struct {
+	Name				string 		`json:"bucket_name"`
+	ObjectCount 		int64 		`json:"object_count"`
+	Size 				int64		`json:"bucket_size"`
+	LargestObjectSize 	int64		`json:"largest_object_size"`
+	SmallestObjectSize	int64		`json:"smallest_object_size"`
+	ModifiedLastAt		time.Time 	`json:"modified_last_at"`	
+}
+
+// // @Summary Get Storage Report
+// // @Tags storage
+// // @Description Get Visualizable Storage Report for the listed cloud accounts.
+// // @Produce json
+// // @Success 200 {object} string
+// // @Failure 400 {object} api.httpError
+// // @Failure 404 {object} api.httpError
+// // @Param s3 buckets body []string
+// // @Router /storage_report [post]
+func storageReportHandler(c echo.Context) error {
 	// Create a new AWS session with the credentials
 	sess, err := createAWSSession()
 	if err != nil {
 		return fmt.Errorf("error creating AWS session: %v", err)
 	}
 
-	// Get List of Buckets
-	buckets, err := listS3Buckets(sess)
-	if err != nil {
-		return fmt.Errorf("error retrieving bucket list: %v", err)
+	req := new(bucketsRequest)
+    if err := c.Bind(req); err != nil {
+        return c.String(http.StatusBadRequest, err.Error())
+    }
+    buckets := req.Buckets
+
+	//If no buckets specified, retrieve all buckets
+	if len(buckets) == 0{
+		// Get List of Buckets
+		buckets, err = listS3Buckets(sess)
+		if err != nil {
+			return fmt.Errorf("error retrieving bucket list: %v", err)
+		}
 	}
 
-	csvContent, err := createS3SummaryCSV(sess, buckets)
+	bucketSummaries, err := createS3Summary(sess, buckets)
 	if err != nil {
 		return fmt.Errorf("error creating s3 summary csv: %v", err)
 	}
 
-	// Set the content type and disposition headers to force download
-	c.Response().Header().Set(echo.HeaderContentType, "text/csv")
-	c.Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename=s3report.csv")
-
-	// Write the CSV data to the response
-	c.Response().Write([]byte(csvContent))
-
-	return nil
+	return c.JSON(http.StatusOK, bucketSummaries)
 }
 
 func createAWSSession() (*session.Session, error) {
@@ -94,21 +118,27 @@ func getBucketObjects(sess *session.Session, bucketName string) (*s3.ListObjects
 	return resp, nil
 }
 
-func createS3SummaryCSV(sess *session.Session, buckets []string) (string, error) {
-	// Create CSV header
-	csvContent := "Bucket Name,Object Count,Bucket Size,Largest Object Size,Smallest Object Size,Date Last Modified\n"
+func createS3Summary(sess *session.Session, buckets []string) ([]bucketSummary, error) {
+	b := bucketSummary{}
+	bucketSummaries := []bucketSummary{}
 
 	// Loop through the buckets and get metadata
 	for _, bucketName := range buckets {
 		// Get bucket objects
 		objResp, err := getBucketObjects(sess, bucketName)
 		if err != nil {
-			return "", fmt.Errorf("error getting objects for bucket %s: %v", bucketName, err)
+			return bucketSummaries, fmt.Errorf("error getting objects for bucket %s: %v", bucketName, err)
 		}
 
 		// Skip empty buckets
 		if len(objResp.Contents) == 0 {
-			csvContent += fmt.Sprintf("%s,%d,%d,,-,-\n", bucketName, 0, 0)
+			b = bucketSummary{
+				Name:	bucketName,
+				ObjectCount: 0,
+				Size: 0,
+				LargestObjectSize: 0,
+				SmallestObjectSize: 0,
+			}
 			continue
 		}
 
@@ -136,26 +166,20 @@ func createS3SummaryCSV(sess *session.Session, buckets []string) (string, error)
 			}
 		}
 
-		// Add metadata to CSV content
-		csvContent += fmt.Sprintf("%s,%d,%d,%d,%d,%s\n", bucketName, numObjects, totalSize, largestSize, smallestSize, lastModTime.Format(time.RFC3339))
+		b = bucketSummary{
+			Name:	bucketName,
+			ObjectCount: int64(numObjects),
+			Size: totalSize,
+			LargestObjectSize: largestSize,
+			SmallestObjectSize: smallestSize,
+			ModifiedLastAt: lastModTime,
+		} 
+
+		bucketSummaries = append(bucketSummaries, b)
 	}
 
-	return csvContent, nil
+	return bucketSummaries, nil
 }
-
-
-// // @Summary Get Storage Report
-// // @Tags storage
-// // @Description Get Visualizable Storage Report for the listed cloud accounts.
-// // @Produce json
-// // @Success 200 {object} string
-// // @Failure 400 {object} api.httpError
-// // @Failure 404 {object} api.httpError
-// // @Param accounts body []string true "Cloud Accounts"
-// // @Router /storage_report [post]
-// func storageReportHandler(c echo.Context) error {
-// 	return c.JSON(http.StatusOK, "Report Contents")
-// }
 
 // // @Summary Get Storage Recommendations
 // // @Tags storage

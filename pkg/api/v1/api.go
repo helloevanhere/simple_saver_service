@@ -6,7 +6,6 @@ import (
 
 func Register(e *echo.Echo) {
 	e.GET("/", testHandler)
-	e.GET("/s3summary", getS3SummarysHandler)
-	// e.POST("/storage_report", getS3SummarysHandler)
+	e.POST("/storage_report", storageReportHandler)
 	// e.POST("/storage_recommendation", storageRecommendationHandler)
 }
