@@ -14,9 +14,10 @@ import (
 
 type s3Summary struct {
 	TotalCount			int64		`json:"bucket_count_total"`
-	TotalSize			int64		`json:"bucket_size_total"`
+	TotalSize			int64		`json:"bucket_size_total"`		//in bytes
 	TotalObjectCount	int64		`json:"object_count_total"`
 	AvgObjectCount		int64		`json:"object_count_avg"`
+	AvgSize				int64		`json:"bucket_size_avg"`
 	BucketSummaries []bucketSummary `json:"bucket_summaries"`
 }
 
@@ -165,6 +166,7 @@ func createS3Summary(sess *session.Session, buckets []string) (s3Summary, error)
 	summary.TotalSize = totalSize
 	summary.TotalObjectCount = totalObjectCount
 	summary.AvgObjectCount = int64(totalObjectCount/summary.TotalCount)
+	summary.AvgSize = int64(totalSize/summary.TotalCount)
 
 	return summary, nil
 }
