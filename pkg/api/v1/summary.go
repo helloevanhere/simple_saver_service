@@ -13,16 +13,16 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 )
 
-type s3Summary struct {
+type S3Summary struct {
 	TotalCount			int64		`json:"bucket_count_total"`
 	TotalSize			int64		`json:"bucket_size_total"`		//in bytes
 	TotalObjectCount	int64		`json:"object_count_total"`
 	AvgObjectCount		int64		`json:"object_count_avg"`
 	AvgSize				int64		`json:"bucket_size_avg"`
-	BucketSummaries []bucketSummary `json:"bucket_summaries"`
+	BucketSummaries []BucketSummary `json:"bucket_summaries"`
 }
 
-type bucketSummary struct {
+type BucketSummary struct {
 	Name				string 		`json:"bucket_name"`
 	ObjectCount 		int64 		`json:"object_count"`
 	Size 				int64		`json:"bucket_size"` 			//in bytes
@@ -81,9 +81,9 @@ func listBucketObjects(sess *session.Session, bucketName string) (*s3.ListObject
 	return resp, nil
 }
 
-func createBucketSummaries(sess *session.Session, buckets []string) ([]bucketSummary, error) {
-	b := bucketSummary{}
-	bucketSummaries := []bucketSummary{}
+func createBucketSummaries(sess *session.Session, buckets []string) ([]BucketSummary, error) {
+	b := BucketSummary{}
+	bucketSummaries := []BucketSummary{}
 
 	// Loop through the buckets and get metadata
 	for _, bucketName := range buckets {
@@ -95,12 +95,13 @@ func createBucketSummaries(sess *session.Session, buckets []string) ([]bucketSum
 
 		// Skip empty buckets
 		if len(objResp.Contents) == 0 {
-			b = bucketSummary{
+			b = BucketSummary{
 				Name:	bucketName,
 				ObjectCount: 0,
 				Size: 0,
 				LargestObjectSize: 0,
 				SmallestObjectSize: 0,
+				//TO DO: Make ModifiedLastAt the bucket's creation date
 				ModifiedLastAt: time.Time{},
 			}
 			bucketSummaries = append(bucketSummaries, b)
@@ -131,7 +132,7 @@ func createBucketSummaries(sess *session.Session, buckets []string) ([]bucketSum
 			}
 		}
 
-		b = bucketSummary{
+		b = BucketSummary{
 			Name:	bucketName,
 			ObjectCount: int64(numObjects),
 			Size: totalSize,
@@ -146,8 +147,8 @@ func createBucketSummaries(sess *session.Session, buckets []string) ([]bucketSum
 	return bucketSummaries, nil
 }
 
-func createS3Summary(sess *session.Session, buckets []string) (s3Summary, error) {
-	summary := s3Summary{}
+func createS3Summary(sess *session.Session, buckets []string) (S3Summary, error) {
+	summary := S3Summary{}
 	var err error
 
 	summary.BucketSummaries, err = createBucketSummaries(sess, buckets)

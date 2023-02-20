@@ -7,5 +7,5 @@ import (
 func Register(e *echo.Echo) {
 	e.GET("/", testHandler)
 	e.POST("/storage_report", storageReportHandler)
-	// e.POST("/storage_recommendation", storageRecommendationHandler)
+	e.POST("/storage_recommendation", storageRecommendationHandler)
 }
