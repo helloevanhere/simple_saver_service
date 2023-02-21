@@ -44,7 +44,7 @@ Stop the server
 ### Storage Report
 Retrieves a snapshot summary of your S3 usage
 
-```http
+```
     POST /storage_report
     Host: localhost
     Content-Type: application/json
@@ -58,11 +58,11 @@ Use "*" to retrieve storage report for all buckets.
 
 #### Example: One Bucket
 
-```http
+```bash
 curl -X POST -H "Content-Type: application/json" -d '{"buckets":["my-bucket"]}' http://localhost:8080/storage_report
 ```
 #### Example: All buckets
-```http
+```bash
 curl -X POST -H "Content-Type: application/json" -d '{"buckets":["*"]}' http://localhost:8080/storage_report
 ```
 
@@ -70,7 +70,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"buckets":["*"]}' http://l
 ### Storage Recommendations
 Retrieves analysis of bucket data and recommends simple saving solutions 
 
-```http
+```
     POST /storage_recommendation
     Host: localhost
     Content-Type: application/json
@@ -83,11 +83,11 @@ Retrieves analysis of bucket data and recommends simple saving solutions
 
 Use "*" to retrieve storage Recommendations for all buckets.
 #### Example: One Bucket
-```http
+```bash
 curl -X POST -H "Content-Type: application/json" -d '{"buckets":["*"]}' http://localhost:8080/storage_report
 ```
 #### Example: All Buckets
-```http
+```bash
 curl -X POST -H "Content-Type: application/json" -d '{"buckets":["*"]}' http://localhost:8080/storage_recommendation
 ```
 ## Environment Variables
