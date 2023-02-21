@@ -92,7 +92,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"buckets":["*"]}' http://l
 ```
 ## Environment Variables
 
-To run this project, you will need to add the following environment variables to your ~/.zshrc or ~/.bash-profile
+To run this project, you will need to add the following environment variables to your `~/.zshrc` or `~/.bash-profile`
 
 `AWS_ACCESS_KEY_ID`
 
