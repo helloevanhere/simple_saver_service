@@ -84,7 +84,7 @@ Retrieves analysis of bucket data and recommends simple saving solutions
 Use "*" to retrieve storage Recommendations for all buckets.
 #### Example: One Bucket
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"buckets":["*"]}' http://localhost:8080/storage_report
+curl -X POST -H "Content-Type: application/json" -d '{"buckets":["my-bucket"]}' http://localhost:8080/storage_report
 ```
 #### Example: All Buckets
 ```bash
