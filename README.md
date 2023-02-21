@@ -104,7 +104,7 @@ To run this project, you will need to add the following environment variables to
 
 ## AWS Credentials
 
-The user associated with your `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` should have the following permissions at a minimum:
+The AWS user associated with your `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` should have the following IAM permissions at a minimum:
 
 ```
 {
