@@ -6,6 +6,8 @@ import (
 
 	"github.com/helloevanhere/simple_saver_service/pkg/awsHelpers"
 	"github.com/helloevanhere/simple_saver_service/pkg/recommendation"
+	"github.com/helloevanhere/simple_saver_service/pkg/recommendation/analyze"
+	"github.com/helloevanhere/simple_saver_service/pkg/recommendation/scan"
 	"github.com/helloevanhere/simple_saver_service/pkg/summary"
 	"github.com/labstack/echo/v4"
 )
@@ -43,6 +45,7 @@ func storageReportHandler(c echo.Context) error {
 	//If no buckets specified, retrieve all buckets
 	if buckets[0] == "*" {
 		// Get List of Buckets
+		//AWS SDK LIST CALL
 		buckets, err = awsHelpers.ListS3Buckets(sess)
 		if err != nil {
 			return fmt.Errorf("error retrieving bucket list: %v", err)
@@ -83,18 +86,19 @@ func storageRecommendationHandler(c echo.Context) error {
 	//If no buckets specified, retrieve all buckets
 	if buckets[0] == "*" {
 		// Get List of Buckets
+		//AWS SDK LIST CALL
 		buckets, err = awsHelpers.ListS3Buckets(sess)
 		if err != nil {
 			return fmt.Errorf("error retrieving bucket list: %v", err)
 		}
 	}
 
-	scans, err := recommendation.ScanS3(sess, buckets)
+	scans, err := scan.ScanS3(sess, buckets)
 	if err != nil {
 		return fmt.Errorf("error creating s3 scans: %v", err)
 	}
 
-	analyses, err := recommendation.AnalyzeScans(scans)
+	analyses, err := analyze.AnalyzeScans(scans)
 	if err != nil {
 		return fmt.Errorf("error creating analyses: %v", err)
 	}
@@ -110,6 +114,6 @@ func storageRecommendationHandler(c echo.Context) error {
 type Report struct {
 	S3Status               string                          `json:"s3_status"`
 	SaverSuggestionSummary []recommendation.Recommendation `json:"saver_suggestion_summary"`
-	ScanResults            []recommendation.BucketScans    `json:"complete_scan_results"`
+	ScanResults            []scan.BucketScans              `json:"complete_scan_results"`
 	TotalPotentialSavings  float64                         `json:"total_potential_savings"`
 }

@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/helloevanhere/simple_saver_service/pkg/recommendation/analyze"
 )
 
 type Recommendation struct {
-	Analysis         Analysis         `json:"analysis"`
+	Analysis         analyze.Analysis `json:"analysis"`
 	TargetBuckets    []string         `json:"target_buckets"`
 	Recs             []Rec            `json:"recommendation"`
 	EstimatedSavings EstimatedSavings `json:"estimated_savings"`
@@ -18,7 +20,7 @@ type Rec struct {
 	Text  string `json:"text"`
 }
 
-func CreateRecommendationReport(analyses []Analysis) ([]Recommendation, error) {
+func CreateRecommendationReport(analyses []analyze.Analysis) ([]Recommendation, error) {
 	recs := []Recommendation{}
 	rec := Recommendation{}
 	var err error
@@ -138,17 +140,17 @@ func createRecommendations(name string, bucketsImpacted int) ([]Rec, error) {
 
 }
 
-func collectTargetBuckets(analysis Analysis) ([]string, error) {
+func collectTargetBuckets(analysis analyze.Analysis) ([]string, error) {
 	targetBuckets := []string{}
 
 	for _, result := range analysis.AnalysisResults {
-		if r, ok := reflect.ValueOf(result).Interface().(DataAnalysisResult); ok {
+		if r, ok := reflect.ValueOf(result).Interface().(analyze.ObjectAnalysisResult); ok {
 			targetBuckets = append(targetBuckets, r.BucketSummary.Name)
-		} else if r, ok := reflect.ValueOf(result).Interface().(ArchivableAnalysisResult); ok {
+		} else if r, ok := reflect.ValueOf(result).Interface().(analyze.ArchivableAnalysisResult); ok {
 			targetBuckets = append(targetBuckets, r.BucketSummary.Name)
-		} else if r, ok := reflect.ValueOf(result).Interface().(VersioningAnalysisResult); ok {
+		} else if r, ok := reflect.ValueOf(result).Interface().(analyze.VersioningAnalysisResult); ok {
 			targetBuckets = append(targetBuckets, r.BucketSummary.Name)
-		} else if r, ok := reflect.ValueOf(result).Interface().(LifecycleAnalysisResult); ok {
+		} else if r, ok := reflect.ValueOf(result).Interface().(analyze.LifecycleAnalysisResult); ok {
 			targetBuckets = append(targetBuckets, r.BucketSummary.Name)
 		} else {
 			continue

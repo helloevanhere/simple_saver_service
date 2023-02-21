@@ -1,5 +1,7 @@
 package awsHelpers
 
+//This package contains helpers that utilize the AWS SDK
+
 import (
 	"fmt"
 	"os"
@@ -10,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
+// Creates an AWS Session object
 func CreateAWSSession() (*session.Session, error) {
 	// Get the AWS credentials from the environment variables
 	accessKeyID := os.Getenv("AWS_ACCESS_KEY_ID")
@@ -28,9 +31,11 @@ func CreateAWSSession() (*session.Session, error) {
 	return sess, nil
 }
 
+// Takes in an AWS session object, calls ListBuckets and returns a [] of the bucket names
 func ListS3Buckets(sess *session.Session) ([]string, error) {
 	svc := s3.New(sess)
 
+	//AWS SDK LIST CALL
 	result, err := svc.ListBuckets(nil)
 	if err != nil {
 		return nil, err
@@ -45,6 +50,7 @@ func ListS3Buckets(sess *session.Session) ([]string, error) {
 	return bucketNames, nil
 }
 
+// Takes in a session obj and bucket name, calls ListObjects and returns a ptr to the output
 func ListBucketObjects(sess *session.Session, bucketName string) (*s3.ListObjectsV2Output, error) {
 	svc := s3.New(sess)
 
@@ -52,6 +58,7 @@ func ListBucketObjects(sess *session.Session, bucketName string) (*s3.ListObject
 		Bucket: aws.String(bucketName),
 	}
 
+	//AWS SDK LIST CALL
 	resp, err := svc.ListObjectsV2(input)
 	if err != nil {
 		return nil, err
