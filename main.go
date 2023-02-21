@@ -3,11 +3,9 @@ package main
 import (
 	"os"
 
+	"github.com/helloevanhere/simple_saver_service/pkg/api/v1"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/helloevanhere/simple_saver_service/pkg/api/v1"
-
-
 )
 
 func main() {
