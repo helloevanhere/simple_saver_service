@@ -1,12 +1,14 @@
 package analyze
 
 import (
+	"github.com/helloevanhere/simple_saver_service/pkg/recommendation/estimate"
 	"github.com/helloevanhere/simple_saver_service/pkg/recommendation/scan"
 	"github.com/helloevanhere/simple_saver_service/pkg/summary"
 )
 
 type AnalysisResult interface {
 	GetBucketSummary() summary.BucketSummary
+	GetEstimates() estimate.EstimatedSavings
 }
 
 type Analysis struct {

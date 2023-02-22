@@ -9,10 +9,9 @@ import (
 )
 
 type Recommendation struct {
-	Analysis         analyze.Analysis `json:"analysis"`
-	TargetBuckets    []string         `json:"target_buckets"`
-	Recs             []Rec            `json:"recommendation"`
-	EstimatedSavings EstimatedSavings `json:"estimated_savings"`
+	Analysis      analyze.Analysis `json:"analysis"`
+	TargetBuckets []string         `json:"target_buckets"`
+	Recs          []Rec            `json:"recommendation"`
 }
 
 type Rec struct {

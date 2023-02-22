@@ -6,18 +6,25 @@ import (
 	"strings"
 	"time"
 
+	"github.com/helloevanhere/simple_saver_service/pkg/recommendation/estimate"
 	"github.com/helloevanhere/simple_saver_service/pkg/recommendation/scan"
 	"github.com/helloevanhere/simple_saver_service/pkg/summary"
 )
 
 type ArchivableAnalysisResult struct {
-	BucketSummary  summary.BucketSummary `json:"bucket_summary"`
-	StorageClasses []string              `json:"storage_classes"`
+	BucketSummary    summary.BucketSummary     `json:"bucket_summary"`
+	StorageClasses   []string                  `json:"storage_classes"`
+	EstimatedSavings estimate.EstimatedSavings `json:"estimated_savings"`
 }
 
 // Statisfies AnalysisResult interface
 func (r ArchivableAnalysisResult) GetBucketSummary() summary.BucketSummary {
 	return r.BucketSummary
+}
+
+// Statisfies AnalysisResult interface
+func (r ArchivableAnalysisResult) GetEstimates() estimate.EstimatedSavings {
+	return r.EstimatedSavings
 }
 
 // Checks if a bucket contains archive/less frequently access data and
@@ -72,13 +79,19 @@ func isPastInactiveThreshold(modifiedLastAt time.Time) bool {
 }
 
 type VersioningAnalysisResult struct {
-	BucketSummary    summary.BucketSummary `json:"bucket_summary"`
-	VersioningStatus string                `json:"versioning_status"`
+	BucketSummary    summary.BucketSummary     `json:"bucket_summary"`
+	VersioningStatus string                    `json:"versioning_status"`
+	EstimatedSavings estimate.EstimatedSavings `json:"estimated_savings"`
 }
 
 // Statisfies AnalysisResult interface
 func (r VersioningAnalysisResult) GetBucketSummary() summary.BucketSummary {
 	return r.BucketSummary
+}
+
+// Statisfies AnalysisResult interface
+func (r VersioningAnalysisResult) GetEstimates() estimate.EstimatedSavings {
+	return r.EstimatedSavings
 }
 
 // Takes in BucketScans and returns VersioningAnalysisResult
@@ -101,13 +114,19 @@ func versioningAnalysis(scan scan.BucketScans) (VersioningAnalysisResult, error)
 }
 
 type LifecycleAnalysisResult struct {
-	BucketSummary   summary.BucketSummary `json:"bucket_summary"`
-	LifecycleDetail scan.LifecycleDetail  `json:"lifecycle_detail"`
+	BucketSummary    summary.BucketSummary     `json:"bucket_summary"`
+	LifecycleDetail  scan.LifecycleDetail      `json:"lifecycle_detail"`
+	EstimatedSavings estimate.EstimatedSavings `json:"estimated_savings"`
 }
 
 // Statisfies AnalysisResult interface
 func (r LifecycleAnalysisResult) GetBucketSummary() summary.BucketSummary {
 	return r.BucketSummary
+}
+
+// Statisfies AnalysisResult interface
+func (r LifecycleAnalysisResult) GetEstimates() estimate.EstimatedSavings {
+	return r.EstimatedSavings
 }
 
 // Takes in BucketScans and returns LifecycleAnalysisResult
