@@ -25,16 +25,39 @@ func CurrentStorageCost(bucketSizeinBytes int64, storageClass string) (float64, 
 		return 0, fmt.Errorf("invalid storage class: %s", storageClass)
 	}
 
-	return float64(bucketSizeinBytes) / 1024 / 1024 / 1024 * price, nil
+	// bytes to GB
+	return (float64(bucketSizeinBytes) / 1000000000) * price, nil
 }
 
+// Calculate monthly savings for deletin
 func SavingsForBytesDeletedByStorageClass(objectSizeInBytes int64, storageClass string) (savings float64) {
 	// Calculate the storage cost of the objects to be deleted
-	monthlyCost := float64(objectSizeInBytes) / (1024 * 1024 * 1024) * StorageClassPrices[storageClass]
+	// bytes to GB
+	monthlyCost := (float64(objectSizeInBytes) / 1000000000) * StorageClassPrices[storageClass]
 
 	return monthlyCost
 }
 
+// Estimate the min and max savings for compressing compressible file types
+func SavingsForBytesCompressedByStorageClass(dataSize int64, compressionType string, storageClass string) (float64, float64, error) {
+	minSize, maxSize, err := estimateCompressedSize(dataSize, compressionType)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	price, ok := StorageClassPrices[storageClass]
+	if !ok {
+		return 0, 0, fmt.Errorf("invalid storage class: %s", storageClass)
+	}
+
+	// bytes to GB
+	minSaving := (float64(maxSize) / 1000000000) * price
+	maxSaving := (float64(minSize) / 1000000000) * price
+
+	return minSaving, maxSaving, nil
+}
+
+// HELPER for SavingsForBytesCompressedByStorageClass()
 // compressionType can be one of "gzip", "zlib", "zip" ,"snappy"
 func estimateCompressedSize(dataSize int64, compressionType string) (minSize int64, maxSize int64, err error) {
 	switch compressionType {
@@ -78,21 +101,4 @@ func estimateCompressedSize(dataSize int64, compressionType string) (minSize int
 		err = fmt.Errorf("error estimating compressed size, unsupported compression type: %s", compressionType)
 	}
 	return minSize, maxSize, err
-}
-
-func SavingsForBytesCompressedByStorageClass(dataSize int64, compressionType string, storageClass string) (float64, float64, error) {
-	minSize, maxSize, err := estimateCompressedSize(dataSize, compressionType)
-	if err != nil {
-		return 0, 0, err
-	}
-
-	price, ok := StorageClassPrices[storageClass]
-	if !ok {
-		return 0, 0, fmt.Errorf("invalid storage class: %s", storageClass)
-	}
-
-	minSaving := float64(maxSize) / 1024 / 1024 / 1024 * price
-	maxSaving := float64(minSize) / 1024 / 1024 / 1024 * price
-
-	return minSaving, maxSaving, nil
 }

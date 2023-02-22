@@ -25,11 +25,6 @@ func (r ObjectAnalysisResult) GetEstimates() estimate.EstimatedSavings {
 func ObjectAnalysis(bucketSummary summary.BucketSummary, bucketScan scan.BucketScan, objectScan scan.ObjectScan) (ObjectAnalysisResult, error) {
 	analysisResult := ObjectAnalysisResult{}
 
-	// currentS3Cost, err := estimate.CurrentStorageCost(bucketSummary.Size, bucketScan.StorageClasses[0])
-	// if err != nil {
-	// 	return ObjectAnalysisResult{}, err
-	// }
-
 	switch objectScan.DataCategory {
 	case "incomplete_multipart_upload":
 		//no null dereference

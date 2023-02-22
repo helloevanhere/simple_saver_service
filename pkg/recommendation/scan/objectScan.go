@@ -195,7 +195,7 @@ func isCompressed(filename string) bool {
 }
 
 // HELPER for uncompressedObjectsScan()
-// isCompressed checks if a given object key ends in a file extension that cannot be impactfully compressed
+// isCompressed returns the appropriate compression type for a given file extension
 func isCompressable(extension string) string {
 	switch extension {
 	case ".gz", ".txt", ".log", ".md", ".yml", ".yaml", ".xml", ".json", ".csv", ".conf", ".py", ".java", ".go", ".js", ".rb", ".pl", ".php", ".html", ".css", ".scss", ".less", ".svg", ".pdf", ".par":

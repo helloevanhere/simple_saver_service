@@ -27,6 +27,7 @@ func (r ArchivableAnalysisResult) GetEstimates() estimate.EstimatedSavings {
 	return r.EstimatedSavings
 }
 
+// TO DO: Make an object scan because storage class is by object
 // Checks if a bucket contains archive/less frequently access data and
 // can be moved to better suited storage class
 func archiveAnalysis(scan scan.BucketScans) (ArchivableAnalysisResult, error) {

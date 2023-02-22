@@ -2,7 +2,6 @@ package recommendation
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/helloevanhere/simple_saver_service/pkg/recommendation/analyze"
@@ -143,17 +142,7 @@ func collectTargetBuckets(analysis analyze.Analysis) ([]string, error) {
 	targetBuckets := []string{}
 
 	for _, result := range analysis.AnalysisResults {
-		if r, ok := reflect.ValueOf(result).Interface().(analyze.ObjectAnalysisResult); ok {
-			targetBuckets = append(targetBuckets, r.BucketSummary.Name)
-		} else if r, ok := reflect.ValueOf(result).Interface().(analyze.ArchivableAnalysisResult); ok {
-			targetBuckets = append(targetBuckets, r.BucketSummary.Name)
-		} else if r, ok := reflect.ValueOf(result).Interface().(analyze.VersioningAnalysisResult); ok {
-			targetBuckets = append(targetBuckets, r.BucketSummary.Name)
-		} else if r, ok := reflect.ValueOf(result).Interface().(analyze.LifecycleAnalysisResult); ok {
-			targetBuckets = append(targetBuckets, r.BucketSummary.Name)
-		} else {
-			continue
-		}
+		targetBuckets = append(targetBuckets, result.GetBucketSummary().Name)
 	}
 
 	if len(targetBuckets) == 0 {
