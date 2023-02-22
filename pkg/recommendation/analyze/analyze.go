@@ -88,7 +88,7 @@ func AnalyzeScans(scans []scan.BucketScans) ([]Analysis, error) {
 		for _, objectScan := range scan.Scans.ObjectScans {
 			switch objectScan.DataCategory {
 			case "incomplete_multipart_upload":
-				dataResult, err := objectAnalysis(scan.BucketSummary, scan.Scans.BucketScan, objectScan)
+				dataResult, err := ObjectAnalysis(scan.BucketSummary, scan.Scans.BucketScan, objectScan)
 				if err != nil {
 					return nil, err
 				}
@@ -96,7 +96,7 @@ func AnalyzeScans(scans []scan.BucketScans) ([]Analysis, error) {
 					incomplete.AnalysisResults = append(incomplete.AnalysisResults, dataResult)
 				}
 			case "duplicate_objects":
-				dataResult, err := objectAnalysis(scan.BucketSummary, scan.Scans.BucketScan, objectScan)
+				dataResult, err := ObjectAnalysis(scan.BucketSummary, scan.Scans.BucketScan, objectScan)
 				if err != nil {
 					return nil, err
 				}
@@ -104,7 +104,7 @@ func AnalyzeScans(scans []scan.BucketScans) ([]Analysis, error) {
 					duplicates.AnalysisResults = append(duplicates.AnalysisResults, dataResult)
 				}
 			case "compressible_objects":
-				dataResult, err := objectAnalysis(scan.BucketSummary, scan.Scans.BucketScan, objectScan)
+				dataResult, err := ObjectAnalysis(scan.BucketSummary, scan.Scans.BucketScan, objectScan)
 				if err != nil {
 					return nil, err
 				}

@@ -16,7 +16,7 @@ func (r ObjectAnalysisResult) GetBucketSummary() summary.BucketSummary {
 }
 
 // Takes in BucketSummary, BucketScan and ObjectScan and returns ObjectAnalysisResult
-func objectAnalysis(bucketSummary summary.BucketSummary, bucketScan scan.BucketScan, objectScan scan.ObjectScan) (ObjectAnalysisResult, error) {
+func ObjectAnalysis(bucketSummary summary.BucketSummary, bucketScan scan.BucketScan, objectScan scan.ObjectScan) (ObjectAnalysisResult, error) {
 	analysisResult := ObjectAnalysisResult{}
 
 	switch objectScan.DataCategory {
