@@ -17,17 +17,17 @@ type bucketsRequest struct {
 }
 
 func testHandler(c echo.Context) error {
-	return c.HTML(http.StatusOK, "Hello, Docker! <3")
+	return c.HTML(http.StatusOK, "Welcome to Simple Saver Service!")
 }
 
 // // @Summary Get Storage Report
 // // @Tags storage
-// // @Description Get Visualizable Storage Report for the listed cloud accounts.
+// // @Description Get Visualizable Storage Report for the listed S3 buckets.
 // // @Produce json
-// // @Success 200 {object} string
+// // @Success 200 {object} []string
 // // @Failure 400 {object} api.httpError
 // // @Failure 404 {object} api.httpError
-// // @Param s3 buckets body []string
+// // @Param buckets []string "S3 buckets", "*" indicates all buckets
 // // @Router /storage_report [post]
 func storageReportHandler(c echo.Context) error {
 	// Create a new AWS session with the credentials
@@ -42,7 +42,7 @@ func storageReportHandler(c echo.Context) error {
 	}
 	buckets := req.Buckets
 
-	//If no buckets specified, retrieve all buckets
+	//If * specified, retrieve all buckets
 	if buckets[0] == "*" {
 		// Get List of Buckets
 		//AWS SDK LIST CALL
@@ -62,12 +62,12 @@ func storageReportHandler(c echo.Context) error {
 
 // // @Summary Get Storage Recommendations
 // // @Tags storage
-// // @Description Get Storage Recommendation List for the listed cloud accounts.
+// // @Description Get Storage Recommendation List for the listed S3 Buckets
 // // @Produce json
 // // @Success 200 {object} []string
 // // @Failure 400 {object} api.httpError
 // // @Failure 404 {object} api.httpError
-// // @Param accounts body []string true "Cloud Accounts"
+// // @Param buckets []string "S3 buckets", "*" indicates all buckets
 // // @Router /storage_report [post]
 func storageRecommendationHandler(c echo.Context) error {
 
@@ -83,7 +83,7 @@ func storageRecommendationHandler(c echo.Context) error {
 	}
 	buckets := req.Buckets
 
-	//If no buckets specified, retrieve all buckets
+	//If * specified, retrieve all buckets
 	if buckets[0] == "*" {
 		// Get List of Buckets
 		//AWS SDK LIST CALL

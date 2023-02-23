@@ -26,6 +26,12 @@ Start the server
   make run
 ```
 
+Run tests
+
+```bash
+  make test
+```
+
 Stop the server
 
 ```bash

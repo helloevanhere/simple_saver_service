@@ -5,8 +5,8 @@ import (
 )
 
 type EstimatedSavings struct {
-	CalculatedMonthlylSavingsMin float64 `json:"estimated_savings_min"`
-	CalculatedMonthlySavingsMax  float64 `json:"estimated_savings_max"`
+	CalculatedMonthlylSavingsMin float64 `json:"estimated_monthly_savings_min"`
+	CalculatedMonthlySavingsMax  float64 `json:"estimated_monthly_savings_max"`
 }
 
 // The pricing of storage classes per GB per month
