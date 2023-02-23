@@ -3,7 +3,7 @@
 
 Learn where to save $$$ in S3
 
-Simple Saver Service will scan your S3 buckets, provide summary data and recommendations on how you could save $$$.
+Simple Saver Service will scan your S3 buckets, provide summary data, analyses, and recommendations on how you could save $$$.
 
 #### Amazon Simple Storage Service Requests Rates apply.
 ## Run Locally
