@@ -17,14 +17,7 @@ Clone the project
 Go to the project directory
 
 ```bash
-  cd simple_saver_service
-```
-
-Install dependencies
-
-```bash
-  go install
-  go mod tidy
+  cd ~/{YOUR-GO-PATH}/simple_saver_service
 ```
 
 Start the server
@@ -66,7 +59,6 @@ curl -X POST -H "Content-Type: application/json" -d '{"buckets":["my-bucket"]}' 
 curl -X POST -H "Content-Type: application/json" -d '{"buckets":["*"]}' http://localhost:8080/storage_report
 ```
 
-
 ### Storage Recommendations
 Retrieves analysis of bucket data and recommends simple saving solutions 
 
@@ -99,8 +91,6 @@ To run this project, you will need to add the following environment variables to
 `AWS_SECRET_ACCESS_KEY`
 
 `AWS_REGION`
-
-
 
 ## AWS Credentials
 

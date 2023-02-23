@@ -50,7 +50,7 @@ func ListS3Buckets(sess *session.Session) ([]string, error) {
 	return bucketNames, nil
 }
 
-// Takes in a session obj and bucket name, calls ListObjects and returns a ptr to the output
+// Lists all objects in a bucket
 func ListBucketObjects(sess *session.Session, bucketName string) (*s3.ListObjectsV2Output, error) {
 	svc := s3.New(sess)
 
@@ -58,11 +58,23 @@ func ListBucketObjects(sess *session.Session, bucketName string) (*s3.ListObject
 		Bucket: aws.String(bucketName),
 	}
 
-	//AWS SDK LIST CALL
-	resp, err := svc.ListObjectsV2(input)
+	// AWS SDK LIST CALL
+	var objects []*s3.Object
+	err := svc.ListObjectsV2Pages(input, func(page *s3.ListObjectsV2Output, lastPage bool) bool {
+		for _, obj := range page.Contents {
+			objects = append(objects, obj)
+			if len(objects) >= 1000 { // set flag to true when you have all objects
+				return false
+			}
+		}
+		return !lastPage // continue to next page if you haven't found enough objects
+	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	return resp, nil
+	return &s3.ListObjectsV2Output{
+		Contents: objects,
+	}, nil
 }
