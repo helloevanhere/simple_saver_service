@@ -62,39 +62,39 @@ func SavingsForBytesCompressedByStorageClass(dataSize int64, compressionType str
 func estimateCompressedSize(dataSize int64, compressionType string) (minSize int64, maxSize int64, err error) {
 	switch compressionType {
 	case ".gzip":
-		// GZIP compression ratio of around 2.5:1 to 4:1
+		// GZIP compression ratio 2.5:1 to 4:1
 		minSize = dataSize / 4
-		maxSize = dataSize / 2
+		maxSize = int64(float64(dataSize) / 2.5)
 	case ".zlib", ".zip":
-		// ZLIB, ZIP compression ratio of around 2:1 to 3:1
+		// ZLIB, ZIP compression ratio 2:1 to 3:1
 		minSize = dataSize / 2
 		maxSize = (dataSize * 2) / 3
 	case ".snappy":
 		// SNAPPY compression ratio 2.5:1 to 4:1
 		minSize = dataSize / 4
-		maxSize = dataSize / 2
+		maxSize = int64(float64(dataSize) / 2.5)
 	case ".jpeg":
-		// JPEG compression ratio of around 10:1 to 20:1
+		// JPEG compression ratio 10:1 to 20:1
 		minSize = dataSize / 20
 		maxSize = dataSize / 10
 	case ".mp3":
-		// MP3 compression ratio of around 10:1 to 12:1
+		// MP3 compression ratio 10:1 to 12:1
 		minSize = dataSize / 12
 		maxSize = dataSize / 10
 	case ".h264":
-		// H.264 compression ratio of around 10:1 to 20:1
+		// H.264 compression ratio 10:1 to 20:1
 		minSize = dataSize / 20
 		maxSize = dataSize / 10
 	case ".bzip2":
-		// BZIP2 compression ratio of around 1.5:1 to 3:1
+		// BZIP2 compression ratio 1.5:1 to 3:1
 		minSize = (dataSize * 2) / 3
 		maxSize = int64(float64(dataSize) / 1.5)
 	case ".zstd":
-		// ZSTD compression ratio of around 2.5:1 to 4:1
+		// ZSTD compression ratio 2.5:1 to 4:1
 		minSize = dataSize / 4
-		maxSize = dataSize / 2
+		maxSize = int64(float64(dataSize) / 2.5)
 	case ".7zip":
-		// 7ZIP compression ratio of around 2:1 to 3:1
+		// 7ZIP compression ratio 2:1 to 3:1
 		minSize = dataSize / 3
 		maxSize = dataSize / 2
 	default:
