@@ -60,14 +60,13 @@ func ListBucketObjects(sess *session.Session, bucketName string) (*s3.ListObject
 
 	// AWS SDK LIST CALL
 	var objects []*s3.Object
+	done := false
 	err := svc.ListObjectsV2Pages(input, func(page *s3.ListObjectsV2Output, lastPage bool) bool {
-		for _, obj := range page.Contents {
-			objects = append(objects, obj)
-			if len(objects) >= 999 { // set flag to true when you have all objects
-				return false
-			}
+		objects = append(objects, page.Contents...)
+		if lastPage {
+			done = true
 		}
-		return !lastPage // continue to next page if you haven't found enough objects
+		return !done
 	})
 
 	if err != nil {
