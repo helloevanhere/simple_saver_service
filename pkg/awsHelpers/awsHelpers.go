@@ -63,7 +63,7 @@ func ListBucketObjects(sess *session.Session, bucketName string) (*s3.ListObject
 	err := svc.ListObjectsV2Pages(input, func(page *s3.ListObjectsV2Output, lastPage bool) bool {
 		for _, obj := range page.Contents {
 			objects = append(objects, obj)
-			if len(objects) >= 1000 { // set flag to true when you have all objects
+			if len(objects) >= 999 { // set flag to true when you have all objects
 				return false
 			}
 		}
