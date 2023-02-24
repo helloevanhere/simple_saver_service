@@ -6,6 +6,9 @@ Learn where to save $$$ in S3
 Simple Saver Service will scan your S3 buckets, provide summary data, analyses, and recommendations on how you could save $$$.
 
 #### Amazon Simple Storage Service Requests Rates apply.
+
+Visualizations created with API Response <br>
+<img width="453" alt="Screenshot 2023-02-23 at 4 03 00 PM" src="https://user-images.githubusercontent.com/76878477/221059250-f29b76f5-697d-48fa-83b9-f1f352b9b926.png"><img width="456" alt="Screenshot 2023-02-23 at 4 05 20 PM" src="https://user-images.githubusercontent.com/76878477/221059412-4c35096b-e79b-4ce8-8323-d204212d2210.png"><img width="458" alt="Screenshot 2023-02-23 at 4 05 30 PM" src="https://user-images.githubusercontent.com/76878477/221059439-1ed1aae8-6ba0-47b1-bbba-14ea7db28909.png"><img width="459" alt="Screenshot 2023-02-23 at 4 05 38 PM" src="https://user-images.githubusercontent.com/76878477/221059460-6c640985-f7c2-46dd-bebe-683f823798d4.png">
 ## Run Locally
 
 Clone the project
