@@ -5,6 +5,7 @@ package summary
 import (
 	"fmt"
 	"sort"
+	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -30,56 +31,59 @@ type BucketSummary struct {
 // Takes in a session obj and array of bucket names and returns an array of BucketSummary
 func CreateBucketSummaries(sess *session.Session, buckets []string) ([]BucketSummary, error) {
 	bucketSummaries := []BucketSummary{}
+	var wg sync.WaitGroup
 
-	// Loop through the buckets and get metadata
+	// Retrieve bucket list concurrently
 	for _, bucketName := range buckets {
+		wg.Add(1)
+		go func(bucketName string) {
+			defer wg.Done()
 
-		// Get bucket objects, AWS SDK LIST CALL
-		objResp, err := awsHelpers.ListBucketObjects(sess, bucketName)
-		if err != nil {
-			return bucketSummaries, fmt.Errorf("error getting objects for bucket %s: %v", bucketName, err)
-		}
+			// Get bucket objects, AWS SDK LIST CALL
+			objResp, _ := awsHelpers.ListBucketObjects(sess, bucketName)
 
-		// Skip empty buckets
-		if len(objResp.Contents) == 0 {
+			// Skip empty buckets
+			if len(objResp.Contents) == 0 {
+				//Create BucketSummary
+				b := BucketSummary{
+					Name:        bucketName,
+					ObjectCount: 0,
+					Size:        0,
+					//TO DO: Make ModifiedLastAt the bucket's creation date, which requires ListBuckets
+					ModifiedLastAt: time.Time{},
+				}
+				//add BucketSummary to final result
+				bucketSummaries = append(bucketSummaries, b)
+			}
+
+			// Initialize variables for metadata
+			var totalSize int64
+			var lastModTime time.Time
+			numObjects := len(objResp.Contents)
+
+			// Loop through response and calculate metadata
+			for _, obj := range objResp.Contents {
+				totalSize += *obj.Size
+
+				if obj.LastModified.After(lastModTime) {
+					lastModTime = *obj.LastModified
+				}
+			}
+
 			//Create BucketSummary
 			b := BucketSummary{
-				Name:        bucketName,
-				ObjectCount: 0,
-				Size:        0,
-				//TO DO: Make ModifiedLastAt the bucket's creation date, which requires ListBuckets
-				ModifiedLastAt: time.Time{},
+				Name:           bucketName,
+				ObjectCount:    int64(numObjects),
+				Size:           totalSize,
+				ModifiedLastAt: lastModTime,
 			}
+
 			//add BucketSummary to final result
 			bucketSummaries = append(bucketSummaries, b)
-			continue
-		}
-
-		// Initialize variables for metadata
-		var totalSize int64
-		var lastModTime time.Time
-		numObjects := len(objResp.Contents)
-
-		// Loop through response and calculate metadata
-		for _, obj := range objResp.Contents {
-			totalSize += *obj.Size
-
-			if obj.LastModified.After(lastModTime) {
-				lastModTime = *obj.LastModified
-			}
-		}
-
-		//Create BucketSummary
-		b := BucketSummary{
-			Name:           bucketName,
-			ObjectCount:    int64(numObjects),
-			Size:           totalSize,
-			ModifiedLastAt: lastModTime,
-		}
-
-		//add BucketSummary to final result
-		bucketSummaries = append(bucketSummaries, b)
+		}(bucketName)
 	}
+
+	wg.Wait()
 
 	return bucketSummaries, nil
 }
